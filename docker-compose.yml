@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    restart: always
+    # host network — контейнер видит PostgreSQL на localhost как нативный процесс
+    network_mode: host
+    env_file: .env
+    volumes:
+      # Логи доступны через те же пути что и при systemd
+      - /var/log/alltransfer:/var/log/alltransfer

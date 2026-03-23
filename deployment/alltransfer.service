@@ -1,0 +1,43 @@
+[Unit]
+Description=AllTransfer API Service
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=notify
+User=nikoussr
+Group=nikoussr
+WorkingDirectory=/home/nikoussr/alltransfer_backend
+Environment="PATH=/home/nikoussr/alltransfer_backend/venv/bin"
+EnvironmentFile=/home/nikoussr/alltransfer_backend/.env
+
+# Команда запуска с gunicorn для production
+ExecStart=/home/nikoussr/alltransfer_backend/venv/bin/gunicorn main:app \
+    --workers 4 \
+    --worker-class uvicorn.workers.UvicornWorker \
+    --bind 127.0.0.1:8000 \
+    --access-logfile /var/log/alltransfer/access.log \
+    --error-logfile /var/log/alltransfer/error.log \
+    --log-level info \
+    --timeout 120 \
+    --graceful-timeout 30
+
+# Автоматический перезапуск при падении
+Restart=always
+RestartSec=10
+
+# Ограничения ресурсов
+LimitNOFILE=65536
+MemoryLimit=512M
+
+# Безопасность
+PrivateTmp=true
+NoNewPrivileges=true
+
+# Логирование
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=alltransfer
+
+[Install]
+WantedBy=multi-user.target

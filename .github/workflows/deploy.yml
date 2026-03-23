@@ -1,0 +1,61 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to server
+      env:
+        HOST: ${{ secrets.SERVER_HOST }}
+        PORT: ${{ secrets.SERVER_PORT }}
+        USER: ${{ secrets.SERVER_USER }}
+      run: |
+        ssh -p $PORT -T $USER@$HOST bash << 'ENDSSH'
+        set -e
+        echo "==> Starting deployment..."
+
+        cd /home/nikoussr/alltransfer_backend
+
+        echo "==> Pulling latest code..."
+        git reset --hard HEAD
+        git pull origin master
+
+        echo "==> Making sure log directory exists..."
+        mkdir -p /var/log/alltransfer
+
+        echo "==> Stopping systemd service (if running)..."
+        sudo systemctl stop alltransfer || true
+        sudo systemctl disable alltransfer || true
+
+        echo "==> Building and starting Docker container..."
+        docker compose up --build -d
+
+        echo "==> Waiting for container to start..."
+        sleep 5
+
+        if docker compose ps | grep -q "Up"; then
+          echo "✅ Container started successfully"
+          docker compose ps
+        else
+          echo "❌ Container failed to start, check logs:"
+          docker compose logs --tail=50
+          exit 1
+        fi
+        ENDSSH

@@ -1,0 +1,12 @@
+.env
+.env.prod
+.git
+.github
+.idea
+.claude
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+venv
+tests
