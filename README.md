@@ -1,4 +1,5 @@
-# OkGo — Backend для Telegram Mini App
+
+# OkGo! — Сервис автоматизации планирования и диспетчеризации для перевозчиков и транспортных агентов
 
 Backend для Telegram Mini App, которое соединяет **агентов** (создателей заявок) с **водителями** для межгородских пассажирских перевозок.
 
@@ -6,6 +7,16 @@ Backend для Telegram Mini App, которое соединяет **агент
 
 ---
 
+## Скриншоты
+### Интерфейс
+<img width="3576" height="2650" alt="Group 2991" src="https://github.com/user-attachments/assets/9a4f3f00-49ef-4227-a00e-27096fad3dfa" />
+<img width="3664" height="2273" alt="Group 2990" src="https://github.com/user-attachments/assets/12fba295-ace8-4c3f-a789-e18ea7cc58a9" />
+
+### Grafana
+<img width="1618" height="763" alt="image" src="https://github.com/user-attachments/assets/dd22c5dc-1f02-42b6-a8e6-11519db958fb" />
+
+
+---
 ## Стек технологий
 
 | Слой | Технология |
@@ -140,20 +151,3 @@ git push origin master  →  CI/CD  →  docker compose up --build -d
 Откат: `docker compose down && sudo systemctl start alltransfer`
 
 ---
-
-## Основные эндпоинты API
-
-| Метод | Эндпоинт | Описание |
-|-------|----------|---------|
-| POST | `/api/v1/auth/telegram` | Авторизация через Telegram WebApp |
-| GET | `/api/v1/auth/me` | Данные текущего пользователя |
-| POST | `/api/v1/trips` | Создать поездку |
-| GET | `/api/v1/trips/search` | Поиск поездок по роли / статусу / типу |
-| POST | `/api/v1/vehicles` | Добавить автомобиль |
-| POST | `/api/v1/referrals` | Применить реферальный код |
-| POST | `/api/v1/payment/create` | Создать платёж за подписку |
-| GET | `/api/v1/payment/subscription/status` | Статус подписки |
-| GET | `/api/health` | Проверка работоспособности |
-| GET | `/metrics` | Метрики Prometheus |
-
-Полная интерактивная документация: `/docs` (Swagger UI)
